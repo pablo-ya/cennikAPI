@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cennik Zintegrowane API</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .title {
+            font-size: 32px;
+            font-weight: bold;
+            text-transform: uppercase;
+            margin-bottom: 40px;
+            border-bottom: 4px solid #00d1b2;
+            display: inline-block;
+            padding-bottom: 5px;
+        }
+        .pricing-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .header-row {
+            text-align: left;
+            border-bottom: 1px solid #eee;
+            padding: 15px 0;
+        }
+        .pricing-row {
+            border-bottom: 1px solid #eee;
+            padding: 20px 0;
+        }
+        .request-name {
+            width: 25%;
+            padding: 15px 0;
+            font-weight: normal;
+        }
+        .slider-cell {
+            width: 40%;
+            padding: 15px 0;
+        }
+        .limit-cell {
+            width: 20%;
+            padding: 15px 0;
+            text-align: center;
+        }
+        .price-cell {
+            width: 15%;
+            padding: 15px 0;
+            text-align: center;
+        }
+        .limit-display {
+            border: 1px solid #00d1b2;
+            padding: 10px;
+            text-align: center;
+            border-radius: 4px;
+            width: 100px;
+            margin: 0 auto;
+        }
+        .price-display {
+            background-color: #00d1b2;
+            color: white;
+            padding: 10px;
+            text-align: center;
+            border-radius: 4px;
+            width: 100px;
+            margin: 0 auto;
+        }
+        .total-row {
+            margin-top: 20px;
+            text-align: right;
+        }
+        .slider-container {
+            width: 100%;
+            position: relative;
+        }
+        .slider {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 8px;
+            background: #e0e0e0;
+            outline: none;
+            border-radius: 4px;
+        }
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            background: white;
+            border: 2px solid #00d1b2;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+        .slider::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            background: white;
+            border: 2px solid #00d1b2;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+        .slider-fill {
+            position: absolute;
+            height: 8px;
+            background: #00d1b2;
+            border-radius: 4px 0 0 4px;
+            pointer-events: none;
+        }
+        .slider-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+        }
+        
+        /* Make inputs look like the design */
+        .limit-input {
+            border: 1px solid #00d1b2;
+            padding: 10px;
+            text-align: center;
+            border-radius: 4px;
+            width: 100px;
+            margin: 0 auto;
+            font-size: 14px;
+        }
+        
+        /* Remove spinner arrows from number inputs */
+        input::-webkit-outer-spin-button,
+        input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        input[type=number] {
+            -moz-appearance: textfield;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="title">Cennik Zintegrowane API</h1>
+        
+        <table class="pricing-table">
+            <tr class="header-row">
+                <th>Request</th>
+                <th></th>
+                <th>Limit</th>
+                <th>Cena</th>
+            </tr>
+            
+            <!-- Search row -->
+            <tr class="pricing-row">
+                <td class="request-name">search</td>
+                <td class="slider-cell">
+                    <div class="slider-label">
+                        <span>0</span>
+                        <span></span>
+                        <span>200 000</span>
+                    </div>
+                    <div class="slider-container">
+                        <div class="slider-fill" id="search-fill"></div>
+                        <input type="range" min="0" max="200000" value="150" step="1000" class="slider" id="search-slider">
+                    </div>
+                </td>
+                <td class="limit-cell">
+                    <input type="number" class="limit-input" id="search-limit" value="150" min="0" max="1000000">
+                </td>
+                <td class="price-cell">
+                    <div class="price-display" id="search-price">0,01 zł</div>
+                </td>
+            </tr>
+            
+            <!-- Reverse geocoding row -->
+            <tr class="pricing-row">
+                <td class="request-name">reverse geocoding</td>
+                <td class="slider-cell">
+                    <div class="slider-label">
+                        <span>0</span>
+                        <span></span>
+                        <span>500 000</span>
+                    </div>
+                    <div class="slider-container">
+                        <div class="slider-fill" id="reverse-fill"></div>
+                        <input type="range" min="0" max="500000" value="150" step="1000" class="slider" id="reverse-slider">
+                    </div>
+                </td>
+                <td class="limit-cell">
+                    <input type="number" class="limit-input" id="reverse-limit" value="150" min="0" max="1000000">
+                </td>
+                <td class="price-cell">
+                    <div class="price-display" id="reverse-price">0,00 zł</div>
+                </td>
+            </tr>
+            
+            <!-- Routing row -->
+            <tr class="pricing-row">
+                <td class="request-name">routing</td>
+                <td class="slider-cell">
+                    <div class="slider-label">
+                        <span>0</span>
+                        <span></span>
+                        <span>500 000</span>
+                    </div>
+                    <div class="slider-container">
+                        <div class="slider-fill" id="routing-fill"></div>
+                        <input type="range" min="0" max="500000" value="150" step="1000" class="slider" id="routing-slider">
+                    </div>
+                </td>
+                <td class="limit-cell">
+                    <input type="number" class="limit-input" id="routing-limit" value="150" min="0" max="1000000">
+                </td>
+                <td class="price-cell">
+                    <div class="price-display" id="routing-price">0,00 zł</div>
+                </td>
+            </tr>
+            
+            <!-- Trip matrix row -->
+            <tr class="pricing-row">
+                <td class="request-name">trip matrix</td>
+                <td class="slider-cell">
+                    <div class="slider-label">
+                        <span>0</span>
+                        <span></span>
+                        <span>200 000</span>
+                    </div>
+                    <div class="slider-container">
+                        <div class="slider-fill" id="matrix-fill"></div>
+                        <input type="range" min="0" max="200000" value="150" step="1000" class="slider" id="matrix-slider">
+                    </div>
+                </td>
+                <td class="limit-cell">
+                    <input type="number" class="limit-input" id="matrix-limit" value="150" min="0" max="1000000">
+                </td>
+                <td class="price-cell">
+                    <div class="price-display" id="matrix-price">0,01 zł</div>
+                </td>
+            </tr>
+            
+            <!-- Points order optimization row -->
+            <tr class="pricing-row">
+                <td class="request-name">points order optimization</td>
+                <td class="slider-cell">
+                    <div class="slider-label">
+                        <span>0</span>
+                        <span></span>
+                        <span>200 000</span>
+                    </div>
+                    <div class="slider-container">
+                        <div class="slider-fill" id="points-fill"></div>
+                        <input type="range" min="0" max="200000" value="150" step="1000" class="slider" id="points-slider">
+                    </div>
+                </td>
+                <td class="limit-cell">
+                    <input type="number" class="limit-input" id="points-limit" value="150" min="0" max="1000000">
+                </td>
+                <td class="price-cell">
+                    <div class="price-display" id="points-price">0,01 zł</div>
+                </td>
+            </tr>
+            
+            <!-- Map tiles row -->
+            <tr class="pricing-row">
+                <td class="request-name">map tiles</td>
+                <td class="slider-cell">
+                    <div class="slider-label">
+                        <span>0</span>
+                        <span></span>
+                        <span>500 000</span>
+                    </div>
+                    <div class="slider-container">
+                        <div class="slider-fill" id="tiles-fill"></div>
+                        <input type="range" min="0" max="500000" value="150" step="1000" class="slider" id="tiles-slider">
+                    </div>
+                </td>
+                <td class="limit-cell">
+                    <input type="number" class="limit-input" id="tiles-limit" value="150" min="0" max="1000000">
+                </td>
+                <td class="price-cell">
+                    <div class="price-display" id="tiles-price">0,00 zł</div>
+                </td>
+            </tr>
+        </table>
+        
+        <div class="total-row">
+            <span style="font-weight: bold; margin-right: 15px;">Cena końcowa</span>
+            <div class="price-display" style="display: inline-block;" id="total-price">0,03 zł</div>
+        </div>
+    </div>
+
+    <script>
+        // Define the pricing data
+        const pricingData = {
+            search: { price: 10.00, limit: 200000 },
+            reverse: { price: 2.00, limit: 500000 },
+            routing: { price: 3.00, limit: 500000 },
+            matrix: { price: 10.00, limit: 200000 },
+            points: { price: 17.00, limit: 200000 },
+            tiles: { price: 0.30, limit: 500000 }
+        };
+        
+        // Function to update slider fills
+        function updateSliderFill(sliderId, fillId) {
+            const slider = document.getElementById(sliderId);
+            const fill = document.getElementById(fillId);
+            const percentage = (slider.value / slider.max) * 100;
+            fill.style.width = percentage + '%';
+        }
+        
+        // Function to calculate price for a specific request type
+        function calculatePrice(type, limitValue) {
+            if (limitValue <= 0) return 0;
+            
+            const pricePerUnit = pricingData[type].price;
+            const maxLimit = pricingData[type].limit;
+            
+            // Calculate price as a proportion of the limit
+            const price = (limitValue / maxLimit) * pricePerUnit;
+            
+            return price;
+        }
+        
+        // Function to update price display
+        function updatePriceDisplay(type, price) {
+            const priceDisplay = document.getElementById(`${type}-price`);
+            priceDisplay.textContent = price.toFixed(2).replace('.', ',') + ' zł';
+        }
+        
+        // Function to calculate total price
+        function calculateTotalPrice() {
+            let total = 0;
+            
+            // Calculate price for each request type
+            const searchLimit = parseInt(document.getElementById('search-limit').value) || 0;
+            const searchPrice = calculatePrice('search', searchLimit);
+            updatePriceDisplay('search', searchPrice);
+            total += searchPrice;
+            
+            const reverseLimit = parseInt(document.getElementById('reverse-limit').value) || 0;
+            const reversePrice = calculatePrice('reverse', reverseLimit);
+            updatePriceDisplay('reverse', reversePrice);
+            total += reversePrice;
+            
+            const routingLimit = parseInt(document.getElementById('routing-limit').value) || 0;
+            const routingPrice = calculatePrice('routing', routingLimit);
+            updatePriceDisplay('routing', routingPrice);
+            total += routingPrice;
+            
+            const matrixLimit = parseInt(document.getElementById('matrix-limit').value) || 0;
+            const matrixPrice = calculatePrice('matrix', matrixLimit);
+            updatePriceDisplay('matrix', matrixPrice);
+            total += matrixPrice;
+            
+            const pointsLimit = parseInt(document.getElementById('points-limit').value) || 0;
+            const pointsPrice = calculatePrice('points', pointsLimit);
+            updatePriceDisplay('points', pointsPrice);
+            total += pointsPrice;
+            
+            const tilesLimit = parseInt(document.getElementById('tiles-limit').value) || 0;
+            const tilesPrice = calculatePrice('tiles', tilesLimit);
+            updatePriceDisplay('tiles', tilesPrice);
+            total += tilesPrice;
+            
+            document.getElementById('total-price').textContent = total.toFixed(2).replace('.', ',') + ' zł';
+        }
+        
+        // Function to sync input value with slider
+        function syncInputWithSlider(sliderId, inputId) {
+            const slider = document.getElementById(sliderId);
+            const input = document.getElementById(inputId);
+            input.value = slider.value;
+        }
+        
+        // Function to sync slider value with input
+        function syncSliderWithInput(inputId, sliderId, fillId) {
+            const input = document.getElementById(inputId);
+            const slider = document.getElementById(sliderId);
+            
+            // Make sure the input value doesn't exceed slider max
+            if (parseInt(input.value) > parseInt(slider.max)) {
+                input.value = slider.max;
+            }
+            
+            slider.value = input.value || 0;
+            updateSliderFill(sliderId, fillId);
+        }
+        
+        // Initialize sliders and their fills
+        document.addEventListener('DOMContentLoaded', function() {
+            // Search inputs
+            const searchSlider = document.getElementById('search-slider');
+            const searchLimit = document.getElementById('search-limit');
+            
+            updateSliderFill('search-slider', 'search-fill');
+            syncInputWithSlider('search-slider', 'search-limit');
+            
+            searchSlider.addEventListener('input', function() {
+                syncInputWithSlider('search-slider', 'search-limit');
+                updateSliderFill('search-slider', 'search-fill');
+                calculateTotalPrice();
+            });
+            
+            searchLimit.addEventListener('input', function() {
+                syncSliderWithInput('search-limit', 'search-slider', 'search-fill');
+                calculateTotalPrice();
+            });
+            
+            // Reverse geocoding inputs
+            const reverseSlider = document.getElementById('reverse-slider');
+            const reverseLimit = document.getElementById('reverse-limit');
+            
+            updateSliderFill('reverse-slider', 'reverse-fill');
+            syncInputWithSlider('reverse-slider', 'reverse-limit');
+            
+            reverseSlider.addEventListener('input', function() {
+                syncInputWithSlider('reverse-slider', 'reverse-limit');
+                updateSliderFill('reverse-slider', 'reverse-fill');
+                calculateTotalPrice();
+            });
+            
+            reverseLimit.addEventListener('input', function() {
+                syncSliderWithInput('reverse-limit', 'reverse-slider', 'reverse-fill');
+                calculateTotalPrice();
+            });
+            
+            // Routing inputs
+            const routingSlider = document.getElementById('routing-slider');
+            const routingLimit = document.getElementById('routing-limit');
+            
+            updateSliderFill('routing-slider', 'routing-fill');
+            syncInputWithSlider('routing-slider', 'routing-limit');
+            
+            routingSlider.addEventListener('input', function() {
+                syncInputWithSlider('routing-slider', 'routing-limit');
+                updateSliderFill('routing-slider', 'routing-fill');
+                calculateTotalPrice();
+            });
+            
+            routingLimit.addEventListener('input', function() {
+                syncSliderWithInput('routing-limit', 'routing-slider', 'routing-fill');
+                calculateTotalPrice();
+            });
+            
+            // Trip matrix inputs
+            const matrixSlider = document.getElementById('matrix-slider');
+            const matrixLimit = document.getElementById('matrix-limit');
+            
+            updateSliderFill('matrix-slider', 'matrix-fill');
+            syncInputWithSlider('matrix-slider', 'matrix-limit');
+            
+            matrixSlider.addEventListener('input', function() {
+                syncInputWithSlider('matrix-slider', 'matrix-limit');
+                updateSliderFill('matrix-slider', 'matrix-fill');
+                calculateTotalPrice();
+            });
+            
+            matrixLimit.addEventListener('input', function() {
+                syncSliderWithInput('matrix-limit', 'matrix-slider', 'matrix-fill');
+                calculateTotalPrice();
+            });
+            
+            // Points order optimization inputs
+            const pointsSlider = document.getElementById('points-slider');
+            const pointsLimit = document.getElementById('points-limit');
+            
+            updateSliderFill('points-slider', 'points-fill');
+            syncInputWithSlider('points-slider', 'points-limit');
+            
+            pointsSlider.addEventListener('input', function() {
+                syncInputWithSlider('points-slider', 'points-limit');
+                updateSliderFill('points-slider', 'points-fill');
+                calculateTotalPrice();
+            });
+            
+            pointsLimit.addEventListener('input', function() {
+                syncSliderWithInput('points-limit', 'points-slider', 'points-fill');
+                calculateTotalPrice();
+            });
+            
+            // Map tiles inputs
+            const tilesSlider = document.getElementById('tiles-slider');
+            const tilesLimit = document.getElementById('tiles-limit');
+            
+            updateSliderFill('tiles-slider', 'tiles-fill');
+            syncInputWithSlider('tiles-slider', 'tiles-limit');
+            
+            tilesSlider.addEventListener('input', function() {
+                syncInputWithSlider('tiles-slider', 'tiles-limit');
+                updateSliderFill('tiles-slider', 'tiles-fill');
+                calculateTotalPrice();
+            });
+            
+            tilesLimit.addEventListener('input', function() {
+                syncSliderWithInput('tiles-limit', 'tiles-slider', 'tiles-fill');
+                calculateTotalPrice();
+            });
+            
+            // Calculate initial total price
+            calculateTotalPrice();
+        });
+    </script>
+</body>
+</html>
