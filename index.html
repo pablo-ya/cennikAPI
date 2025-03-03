@@ -4,10 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cennik Zintegrowane API</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
     <style>
         * {
             box-sizing: border-box;
-            font-family: Arial, sans-serif;
+            font-family: 'Roboto', sans-serif;
         }
         .container {
             max-width: 1000px;
@@ -19,9 +20,17 @@
             font-weight: bold;
             text-transform: uppercase;
             margin-bottom: 40px;
-            border-bottom: 4px solid #00d1b2;
             display: inline-block;
-            padding-bottom: 5px;
+            position: relative;
+        }
+        .title::after {
+            content: "";
+            position: absolute;
+            left: 0;
+            bottom: -8px;
+            width: 70%;
+            height: 5px;
+            background-color: #00d1b2;
         }
         .pricing-table {
             width: 100%;
@@ -55,13 +64,14 @@
             padding: 15px 0;
             text-align: center;
         }
-        .limit-display {
+        .limit-input {
             border: 1px solid #00d1b2;
             padding: 10px;
             text-align: center;
             border-radius: 4px;
             width: 100px;
             margin: 0 auto;
+            font-size: 14px;
         }
         .price-display {
             background-color: #00d1b2;
@@ -79,54 +89,70 @@
         .slider-container {
             width: 100%;
             position: relative;
+            height: 8px;
+            margin: 10px 0;
         }
         .slider {
             -webkit-appearance: none;
             width: 100%;
             height: 8px;
-            background: #e0e0e0;
             outline: none;
             border-radius: 4px;
+            background: transparent;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 2;
+            margin: 0;
+        }
+        .slider-background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 8px;
+            background: #e0e0e0;
+            border-radius: 4px;
+            z-index: 0;
         }
         .slider::-webkit-slider-thumb {
             -webkit-appearance: none;
             appearance: none;
             width: 20px;
             height: 20px;
-            background: white;
-            border: 2px solid #00d1b2;
+            background: #00d1b2;
+            border: 2px solid white;
             border-radius: 50%;
             cursor: pointer;
+            position: relative;
+            z-index: 3;
+            margin-top: -6px; /* Wycentrowanie kulki na pasku */
         }
         .slider::-moz-range-thumb {
             width: 20px;
             height: 20px;
-            background: white;
-            border: 2px solid #00d1b2;
+            background: #00d1b2;
+            border: 2px solid white;
             border-radius: 50%;
             cursor: pointer;
+            position: relative;
+            z-index: 3;
+            margin-top: -6px; /* Wycentrowanie kulki na pasku */
         }
         .slider-fill {
             position: absolute;
+            top: 0;
+            left: 0;
             height: 8px;
             background: #00d1b2;
-            border-radius: 4px 0 0 4px;
+            border-radius: 4px;
             pointer-events: none;
+            z-index: 1;
         }
         .slider-label {
             display: flex;
             justify-content: space-between;
             margin-bottom: 5px;
-        }
-        
-        /* Make inputs look like the design */
-        .limit-input {
-            border: 1px solid #00d1b2;
-            padding: 10px;
-            text-align: center;
-            border-radius: 4px;
-            width: 100px;
-            margin: 0 auto;
             font-size: 14px;
         }
         
@@ -163,6 +189,7 @@
                         <span>200 000</span>
                     </div>
                     <div class="slider-container">
+                        <div class="slider-background"></div>
                         <div class="slider-fill" id="search-fill"></div>
                         <input type="range" min="0" max="200000" value="150" step="1000" class="slider" id="search-slider">
                     </div>
@@ -185,6 +212,7 @@
                         <span>500 000</span>
                     </div>
                     <div class="slider-container">
+                        <div class="slider-background"></div>
                         <div class="slider-fill" id="reverse-fill"></div>
                         <input type="range" min="0" max="500000" value="150" step="1000" class="slider" id="reverse-slider">
                     </div>
@@ -207,6 +235,7 @@
                         <span>500 000</span>
                     </div>
                     <div class="slider-container">
+                        <div class="slider-background"></div>
                         <div class="slider-fill" id="routing-fill"></div>
                         <input type="range" min="0" max="500000" value="150" step="1000" class="slider" id="routing-slider">
                     </div>
@@ -229,6 +258,7 @@
                         <span>200 000</span>
                     </div>
                     <div class="slider-container">
+                        <div class="slider-background"></div>
                         <div class="slider-fill" id="matrix-fill"></div>
                         <input type="range" min="0" max="200000" value="150" step="1000" class="slider" id="matrix-slider">
                     </div>
@@ -251,6 +281,7 @@
                         <span>200 000</span>
                     </div>
                     <div class="slider-container">
+                        <div class="slider-background"></div>
                         <div class="slider-fill" id="points-fill"></div>
                         <input type="range" min="0" max="200000" value="150" step="1000" class="slider" id="points-slider">
                     </div>
@@ -273,6 +304,7 @@
                         <span>500 000</span>
                     </div>
                     <div class="slider-container">
+                        <div class="slider-background"></div>
                         <div class="slider-fill" id="tiles-fill"></div>
                         <input type="range" min="0" max="500000" value="150" step="1000" class="slider" id="tiles-slider">
                     </div>
