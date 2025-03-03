@@ -198,7 +198,7 @@
                     <input type="number" class="limit-input" id="search-limit" value="150" min="0" max="1000000">
                 </td>
                 <td class="price-cell">
-                    <div class="price-display" id="search-price">0,01 zł</div>
+                    <div class="price-display" id="search-price">0,00 zł</div>
                 </td>
             </tr>
             
@@ -267,7 +267,7 @@
                     <input type="number" class="limit-input" id="matrix-limit" value="150" min="0" max="1000000">
                 </td>
                 <td class="price-cell">
-                    <div class="price-display" id="matrix-price">0,01 zł</div>
+                    <div class="price-display" id="matrix-price">0,00 zł</div>
                 </td>
             </tr>
             
@@ -290,7 +290,7 @@
                     <input type="number" class="limit-input" id="points-limit" value="150" min="0" max="1000000">
                 </td>
                 <td class="price-cell">
-                    <div class="price-display" id="points-price">0,01 zł</div>
+                    <div class="price-display" id="points-price">0,00 zł</div>
                 </td>
             </tr>
             
@@ -320,19 +320,19 @@
         
         <div class="total-row">
             <span style="font-weight: bold; margin-right: 15px;">Cena końcowa</span>
-            <div class="price-display" style="display: inline-block;" id="total-price">0,03 zł</div>
+            <div class="price-display" style="display: inline-block;" id="total-price">0,00 zł</div>
         </div>
     </div>
 
     <script>
-        // Define the pricing data
+        // Define the pricing data (cena za 1000 jednostek)
         const pricingData = {
-            search: { price: 10.00, limit: 200000 },
-            reverse: { price: 2.00, limit: 500000 },
-            routing: { price: 3.00, limit: 500000 },
-            matrix: { price: 10.00, limit: 200000 },
-            points: { price: 17.00, limit: 200000 },
-            tiles: { price: 0.30, limit: 500000 }
+            search: { price: 10.00, maxLimit: 200000 },
+            reverse: { price: 2.00, maxLimit: 500000 },
+            routing: { price: 3.00, maxLimit: 500000 },
+            matrix: { price: 10.00, maxLimit: 200000 },
+            points: { price: 17.00, maxLimit: 200000 },
+            tiles: { price: 0.30, maxLimit: 500000 }
         };
         
         // Function to update slider fills
@@ -347,11 +347,10 @@
         function calculatePrice(type, limitValue) {
             if (limitValue <= 0) return 0;
             
-            const pricePerUnit = pricingData[type].price;
-            const maxLimit = pricingData[type].limit;
+            const pricePerThousand = pricingData[type].price;
             
-            // Calculate price as a proportion of the limit
-            const price = (limitValue / maxLimit) * pricePerUnit;
+            // Calculate price as (limit / 1000) * price per 1000 units
+            const price = (limitValue / 1000) * pricePerThousand;
             
             return price;
         }
